@@ -54,7 +54,7 @@ object EscrowproxyIcdp {
     }
 
     def parseFile = {
-      val fileData = sc.textFile("file:///Users/ashish/IdeaProjects/POCs/EscrowProxyDFSpark/src/main/resources/Input/escrow_data.txt")
+      val fileData = sc.textFile("file:///Users/ashish/IdeaProjects/General/data/input_data/textData/escroproxy")
       val filteredData = fileData.map(_.split("\\t")).filter(l => l(5).toLowerCase.matches("recover"))
       filteredData.map(index =>
         flattenTuple(index(0), index(1), index(2), index(3), index(4), index(5), parseClientInfo(index(6)), index(7), index(8), index(9), index(10), index(11), index(12)))
@@ -69,9 +69,9 @@ object EscrowproxyIcdp {
 
       /**
         * KPI : ICDP.RECOVER.CNT
-        * AGG_CNT : _._16
+        * AGG_CNT : _._15
         */
-      val recover_count = usefulData.map(_._16.toDouble).sum.toInt
+      val recover_count = usefulData.map(_._15.toDouble).sum.toInt
       println("recover_count : " + recover_count)
 
       /**
@@ -81,7 +81,7 @@ object EscrowproxyIcdp {
       val recover_uu = usefulData.map(loc => loc._1).distinct.count
       println("recover_uu : " + recover_uu)
 
-      val (success, failure) = usefulData.map(loc => ((loc._1, loc._5), loc._16)).partitionRDDBy(_._1._2 == "200")
+      val (success, failure) = usefulData.map(loc => ((loc._1, loc._5), loc._15)).partitionRDDBy(_._1._2 == "200")
 
       /**
         * KPI : ICDP.RECOVER.SUCCESS.CNT
@@ -123,7 +123,7 @@ object EscrowproxyIcdp {
         * RESPONSEs : l._5
         * ERROR_CODEs : l._12
         */
-      val pc_failure_cnt = usefulData.filter(loc => loc._5 != "200" && loc._12 == "-6015").map(loc => loc._16.toDouble).sum.toInt
+      val pc_failure_cnt = usefulData.filter(loc => loc._5 != "200" && loc._12 == "-6015").map(loc => loc._15.toDouble).sum.toInt
       println("pc_failure_cnt : " + pc_failure_cnt)
 
       /**
@@ -137,9 +137,9 @@ object EscrowproxyIcdp {
       /**
         * KPI : ICDP.RECOVER.RECORD.CNT
         * LABELs : l._2
-        * PRS_IDs : _._16
+        * AGG_CNTs : _._15
         */
-      val record_cnt = usefulData.filter(loc => loc._2.contains("record")).map(loc => loc._16.toDouble).sum.toInt
+      val record_cnt = usefulData.filter(loc => loc._2.contains("record")).map(loc => loc._15.toDouble).sum.toInt
       println("record_cnt : " + record_cnt)
 
       /**
