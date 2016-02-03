@@ -1,8 +1,6 @@
 package escrowproxy
 
-import java.util.regex.{Pattern, Matcher}
-
-import org.apache.hadoop.io.{LongWritable, Text}
+import java.util.regex.{Matcher, Pattern}
 
 
 class Utility extends Serializable {
@@ -91,8 +89,8 @@ class Utility extends Serializable {
           os_minor_version = os_ver.substring(os_ver.indexOf("_"))
           os_type = if (os_name.contains("Mac")) "OSX"
 
-          else (if (os_name.contains("iPhone")) "IOS"
-          else (if (os_name.contains("Apple")) "TVOS" else (if (os_name.contains("Watch")) "WATCHOS" else "UNKONWN")))
+          else if (os_name.contains("iPhone")) "IOS"
+          else if (os_name.contains("Apple")) "TVOS" else (if (os_name.contains("Watch")) "WATCHOS" else "UNKONWN")
           if (os_value.contains("Mac")) {
             if (os_ver.split("_").length == 2) {
               os_ver = os_ver + "_0"
