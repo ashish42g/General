@@ -60,36 +60,33 @@ object EscrowProxyDF {
 
     val filCommandEntities = filteredEntities.filter(entity => entity.command != null)
 
-    val RECOVER_U = filCommandEntities.map(entity => (ICDP + "RECOVER" + UU, entity.prs_id))
-    val RECOVER_UU = RECOVER_U.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
+    val RECOVER = filCommandEntities.map(entity => (ICDP + "RECOVER" + UU, entity.prs_id))
+    val RECOVER_UU = RECOVER.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
     RECOVER_UU.foreach(println)
 
-    val RECOVER_C = filCommandEntities.map(entity => (ICDP + "RECOVER.CNT", entity.prs_id))
-    val RECOVER_CNT = RECOVER_C.aggregateByKey(0)((a, v) => a + 1, _ + _)
-    RECOVER_CNT.foreach(println)
+    val RECOVER_CNT = (ICDP + "RECOVER.CNT", RECOVER.count)
+    println(RECOVER_CNT)
 
     val filtSuccessEntities = filCommandEntities.filter(entity => entity.response != null && entity.response.contains(SUCC_RES_CODE))
 
-    val RECOVER_SUCCESS_U = filtSuccessEntities.map(entity => (ICDP + "RECOVER.SUCCESS" + UU, entity.prs_id))
-    val RECOVER_SUCCESS_UU = RECOVER_SUCCESS_U.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
+    val RECOVER_SUCCESS = filtSuccessEntities.map(entity => (ICDP + "RECOVER.SUCCESS" + UU, entity.prs_id))
+    val RECOVER_SUCCESS_UU = RECOVER_SUCCESS.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
     RECOVER_SUCCESS_UU.foreach(println)
 
-    val RECOVER_SUCCESS_C = filtSuccessEntities.map(entity => (ICDP + "RECOVER.SUCCESS.CNT", entity.prs_id))
-    val RECOVER_SUCCESS_CNT = RECOVER_SUCCESS_C.aggregateByKey(0)((a, v) => a + 1, _ + _)
-    RECOVER_SUCCESS_CNT.foreach(println)
+    val RECOVER_SUCCESS_CNT = (ICDP + "RECOVER.SUCCESS.CNT", RECOVER_SUCCESS.count)
+    println(RECOVER_SUCCESS_CNT)
 
 
     val filtFailEntities = filCommandEntities.filter(entity => entity.response != null && !entity.response.contains(SUCC_RES_CODE))
 
-    val RECOVER_FAIL_U = filtFailEntities.map(entity => (ICDP + "RECOVER.FAILURE" + UU, entity.prs_id))
-    val RECOVER_FAIL_UU = RECOVER_FAIL_U.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
+    val RECOVER_FAIL = filtFailEntities.map(entity => (ICDP + "RECOVER.FAILURE" + UU, entity.prs_id))
+    val RECOVER_FAIL_UU = RECOVER_FAIL.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
     RECOVER_FAIL_UU.foreach(println)
 
-    val RECOVER_FAIL_C = filtFailEntities.map(entity => (ICDP + "RECOVER.FAILURE.CNT", entity.prs_id))
-    val RECOVER_FAIL_CNT = RECOVER_FAIL_C.aggregateByKey(0)((a, v) => a + 1, _ + _)
-    RECOVER_FAIL_CNT.foreach(println)
+    val RECOVER_FAIL_CNT = (ICDP + "RECOVER.FAILURE.CNT", RECOVER_FAIL.count)
+    println(RECOVER_FAIL_CNT)
 
-    val REC_FAIL_SUCC_UU = (ICDP + "RECOVER.FAILSUCCESS" + UU, RECOVER_SUCCESS_U.map(l => (l._2, "")).join(RECOVER_FAIL_U.map(l => (l._2, ""))).count)
+    val REC_FAIL_SUCC_UU = (ICDP + "RECOVER.FAILSUCCESS" + UU, RECOVER_SUCCESS.map(l => (l._2, "")).join(RECOVER_FAIL.map(l => (l._2, ""))).count)
     println(REC_FAIL_SUCC_UU)
 
     val filtRecordEntities = filCommandEntities.filter(entity => entity.label.contains("record"))
@@ -114,11 +111,11 @@ object EscrowProxyDF {
     val filtPCFailEntities = filtFailEntities.filter(entity => entity.errorCd.contains("-6015"))
 
     val PC_FAIL = filtPCFailEntities.map(entity => (ICDP + "RECOVER.PCFAILURE" + UU, entity.prs_id))
-    val PC_FAIL_UU = PC_FAIL.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
-    PC_FAIL_UU.foreach(println)
 
-    val PC_FAIL_C = filtPCFailEntities.map(entity => (ICDP + "RECOVER.PCFAILURE.CNT", entity.prs_id))
-    val PC_FAIL_CNT = PC_FAIL_C.aggregateByKey(0)((a, v) => a + 1, _ + _)
-    PC_FAIL_CNT.foreach(println)
+    val PC_FAIL_UU = PC_FAIL.distinct.aggregateByKey(0)((a, v) => a + 1, _ + _)
+    val PC_FAIL_CNT = (ICDP + "RECOVER.PCFAILURE.CNT", PC_FAIL.count)
+
+    PC_FAIL_UU.foreach(println)
+    println(PC_FAIL_CNT)
   }
 }
